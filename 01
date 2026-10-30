@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NBA 2026-27 單雙統計</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#1b1f24;--mut:#6b7280;--bd:#e3e6ea;--odd:#c2410c;--oddbg:#ffedd5;--even:#1d4ed8;--evenbg:#dbeafe;--hd:#eef0f3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111418;--card:#1a1f26;--tx:#e8eaed;--mut:#9aa3ad;--bd:#2c333c;--odd:#fdba74;--oddbg:#4a2410;--even:#93c5fd;--evenbg:#14305c;--hd:#232a33}}
+:root[data-theme="dark"]{--bg:#111418;--card:#1a1f26;--tx:#e8eaed;--mut:#9aa3ad;--bd:#2c333c;--odd:#fdba74;--oddbg:#4a2410;--even:#93c5fd;--evenbg:#14305c;--hd:#232a33}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 -apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;padding:16px}
+h1{font-size:20px;margin:0 0 4px}
+.sub{color:var(--mut);font-size:12px;margin-bottom:12px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:12px}
+.filters{display:flex;flex-wrap:wrap;gap:10px}
+.filters label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:2px}
+select{font:inherit;padding:6px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);min-width:92px}
+button{font:inherit;padding:6px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);align-self:flex-end;cursor:pointer}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+.st{background:var(--hd);border-radius:8px;padding:8px 10px}
+.st b{display:block;font-size:12px;color:var(--mut);font-weight:500}
+.st span{font-size:15px;font-weight:600}
+.st.main{outline:2px solid var(--bd)}
+.st.big span{font-size:30px;line-height:1.2}.st.big b{font-weight:700;color:var(--tx)}
+.o{color:var(--odd)}.e{color:var(--even)}
+.wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;min-width:860px}
+th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--bd);white-space:nowrap}
+th{background:var(--hd);font-size:12px;color:var(--mut);font-weight:600}
+td.l,th.l{text-align:left}
+.q small{display:block;color:var(--mut);font-size:11px}
+.tag{display:inline-block;min-width:26px;padding:1px 6px;border-radius:6px;font-weight:600;font-size:12px}
+.tag.o{background:var(--oddbg)}.tag.e{background:var(--evenbg)}
+.na{color:var(--mut)}
+#updmsg{display:none;margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--hd);font-size:13px}
+.note{color:var(--mut);font-size:12px;margin-top:10px}
+@media (max-width:640px){
+body{padding:10px}
+h1{font-size:18px}
+.bar{position:static;padding:10px}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.filters label{min-width:0}
+select{min-width:0;width:100%}
+button{width:100%;align-self:end}
+.stats{grid-template-columns:repeat(2,1fr)}
+.st.big span{font-size:24px}
+.wrap{border:0;background:none;overflow:visible}
+table,tbody{display:block;min-width:0;width:100%}
+thead{display:none}
+tr{display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border:1px solid var(--bd);border-radius:12px;margin-bottom:10px;overflow:hidden}
+td{border:0;padding:6px 6px;white-space:normal;min-width:0;font-size:13px}
+td.d{grid-column:1/-1;background:var(--hd);text-align:left;font-size:12px;color:var(--mut);padding-bottom:0}
+td.m{grid-column:1/-1;background:var(--hd);font-size:15px;padding-top:2px}
+td.q,td.na,td.f{border-top:1px solid var(--bd)}
+td[data-l]::before{content:attr(data-l);display:block;font-size:11px;color:var(--mut)}
+td.f:nth-last-child(3){grid-column:span 2}
+td[colspan]{grid-column:1/-1}
+.note{font-size:11px}
+}
+</style>
+</head>
+<body>
+<h1>NBA 2026-27 賽季｜單節與全場單雙</h1>
+<div class="sub" id="sub"></div>
+
+<div class="bar">
+  <div class="filters">
+    <label>全場總分<select id="f4"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <label>第1節<select id="f0"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <label>第2節<select id="f1"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <label>第3節<select id="f2"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <label>第4節<select id="f3"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <button id="reset">重設</button>
+    <button id="upd">更新數據</button>
+  </div>
+  <div id="updmsg"></div>
+  <div class="stats" id="stats"></div>
+</div>
+
+<div class="wrap"><table>
+<thead><tr><th class="l">日期</th><th class="l">客隊 @ 主隊</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>全場比數</th><th>全場總分</th><th>單/雙</th></tr></thead>
+<tbody id="rows"></tbody></table></div>
+<div class="note">「單/雙」以兩隊得分相加的總分判斷；單節同理。每格括號內為客隊–主隊。日期為台灣時間。「—」表示該場單節資料尚未補上（不納入單節篩選與統計）。</div>
+
+<script>
+var G=[
+["10/21","BOS","DET",[28,30,30,25],[27,18,37,39],113,121],
+["10/21","PHI","NYK",[23,31,29,23],[25,33,18,24],106,100],
+["10/21","OKC","SAS",[34,31,28,23],[28,16,36,24],116,104],
+["10/22","ATL","ORL",[28,44,27,33],[33,29,38,25],132,125],
+["10/22","MIL","WAS",[23,33,37,23],[25,26,39,38],116,128],
+["10/22","MIN","MIA",[34,35,30,32],[32,27,22,25],131,106],
+["10/22","CHI","TOR",[23,21,27,21],[43,26,34,32],92,135],
+["10/22","CHA","BKN",[27,27,32,24],[23,25,33,22],110,103],
+["10/22","UTA","MEM",[31,20,28,24],[29,35,34,25],103,123],
+["10/22","IND","NOP",[38,18,30,37],[31,35,26,28],123,120],
+["10/22","DAL","HOU",[26,12,38,34],[32,38,30,28],110,128],
+["10/22","GSW","LAL",[33,19,16,37],[34,32,36,25],105,127],
+["10/22","PHX","POR",[12,27,27,17],[43,29,35,17],83,124],
+["10/22","SAC","LAC",[29,25,16,26],[41,20,32,28],96,121],
+["10/23","CLE","PHI",[35,34,21,16],[18,27,37,32],106,114],
+["10/23","DEN","OKC",[27,21,16,20],[24,20,26,26],84,96],
+["10/24","CHI","MIL",[17,44,41,30],[32,30,42,21],132,125],
+["10/24","ATL","CHA",[33,35,29,31],[20,23,19,19],128,81],
+["10/24","NYK","BOS",[27,22,24,30],[26,24,33,24],103,107],
+["10/24","TOR","WAS",[34,26,21,31],[21,31,25,25],112,102],
+["10/24","MIN","ORL",[26,31,29,29],[20,25,15,33],115,93],
+["10/24","DAL","IND",[44,33,21,23],[27,16,33,29],121,105],
+["10/24","DET","MIA",[41,24,38,25],[26,27,27,31],128,111],
+["10/24","HOU","SAS",[32,29,24,29],[27,32,22,29],114,110],
+["10/24","NOP","UTA",[28,24,38,29],[31,31,24,34],119,120],
+["10/24","LAC","LAL",[31,33,26,27],[27,37,39,22],117,125],
+["10/24","MEM","GSW",[33,27,24,27],[34,22,34,18],111,108],
+["10/24","POR","SAC",[27,32,44,25],[33,31,26,30],128,120]
+];
+var START=Date.UTC(2026,9,20),END=Date.UTC(2027,3,15),API="https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
+var UPDATED="內建資料（2026/10/24）",R=[];
+function mk(d,a,h,qa,qh,fa,fh){var q=[null,null,null,null];if(qa){for(var i=0;i<4;i++)q[i]={a:qa[i],h:qh[i],t:qa[i]+qh[i]};}
+  return {d:d,a:a,h:h,q:q,fa:fa,fh:fh,ft:fa==null?null:fa+fh};}
+R=G.map(function(g){return mk(g[0],g[1],g[2],g[3],g[4],g[5],g[6])});
+try{var c=JSON.parse(localStorage.getItem("nbaR")||"null");if(c&&c.R&&c.R.length){R=c.R;UPDATED=c.t}}catch(e){}
+function par(n){return n%2?"odd":"even"}
+function tag(n){var p=par(n);return '<span class="tag '+(p==="odd"?"o":"e")+'">'+(p==="odd"?"單":"雙")+'</span>'}
+function sel(id){return document.getElementById(id)}
+function render(){
+  var f=[sel("f0").value,sel("f1").value,sel("f2").value,sel("f3").value,sel("f4").value];
+  var rows=R.filter(function(r){
+    for(var i=0;i<4;i++){if(f[i]){if(!r.q[i]||par(r.q[i].t)!==f[i])return false}}
+    if(f[4]&&(r.ft==null||par(r.ft)!==f[4]))return false;
+    return true;
+  });
+  sel("rows").innerHTML=rows.map(function(r){
+    var qs=r.q.map(function(x,i){return x?'<td class="q" data-l="Q'+(i+1)+'">'+tag(x.t)+'<small>'+x.t+'（'+x.a+'–'+x.h+'）</small></td>':'<td class="na" data-l="Q'+(i+1)+'">—</td>'}).join("");
+    var fin=r.ft!=null;
+    return '<tr><td class="l d">'+r.d+'</td><td class="l m"><b>'+r.a+'</b> @ <b>'+r.h+'</b></td>'+qs+'<td class="f" data-l="全場比數">'+(fin?r.fa+' – '+r.fh:'未開賽')+'</td><td class="f" data-l="總分">'+(fin?r.ft:'—')+'</td><td class="f" data-l="單/雙">'+(fin?tag(r.ft):'—')+'</td></tr>';
+  }).join("")||'<tr><td colspan="9" class="na">沒有符合條件的比賽</td></tr>';
+  var o=0,e=0,done=0;rows.forEach(function(r){if(r.ft!=null){done++;par(r.ft)==="odd"?o++:e++}});
+  var h='<div class="st main"><b>篩選後場數</b><span>'+rows.length+'（已完賽 '+done+'）</span></div>'+
+    '<div class="st main'+(o>e?' big':'')+'"><b>全場總分 單</b><span class="o">'+o+'</span></div>'+
+    '<div class="st main'+(e>o?' big':'')+'"><b>全場總分 雙</b><span class="e">'+e+'</span></div>';
+  for(var i=0;i<4;i++){
+    var qo=0,qe=0;rows.forEach(function(r){if(r.q[i]){par(r.q[i].t)==="odd"?qo++:qe++}});
+    h+='<div class="st"><b>第'+(i+1)+'節 單 / 雙</b><span><span class="o">'+qo+'</span> / <span class="e">'+qe+'</span></span></div>';
+  }
+  sel("stats").innerHTML=h;
+  sel("sub").textContent="賽程 "+R.length+" 場｜資料更新：「"+UPDATED+"」｜來源 ESPN";
+}
+function ds(t){var d=new Date(t);return d.getUTCFullYear()+("0"+(d.getUTCMonth()+1)).slice(-2)+("0"+d.getUTCDate()).slice(-2)}
+function getDay(s){
+  return fetch(API+"?dates="+s+"&limit=100").then(function(r){if(!r.ok)throw new Error("ESPN 回傳 HTTP "+r.status);return r.json()}).then(function(j){
+    return (j.events||[]).map(function(e){
+      var cs=e.competitions[0].competitors,H=cs.filter(function(x){return x.homeAway==="home"})[0],A=cs.filter(function(x){return x.homeAway==="away"})[0];
+      var fin=e.status&&e.status.type&&e.status.type.completed===true;
+      function ls(t){var a=[];for(var i=0;i<4;i++){if(!fin||!t.linescores||!t.linescores[i])return null;a.push(Number(t.linescores[i].value))}return a}
+      return mk(s.slice(4,6)+"/"+s.slice(6),A.team.abbreviation,H.team.abbreviation,ls(A),ls(H),fin?Number(A.score):null,fin?Number(H.score):null);
+    });
+  });
+}
+async function update(){
+  var b=sel("upd"),m=sel("updmsg");b.disabled=true;m.style.display="block";
+  try{
+    var days=[];for(var t=START;t<=END;t+=864e5)days.push(ds(t));
+    var out=[];
+    for(var i=0;i<days.length;i+=10){
+      m.textContent="更新中… "+Math.min(i+10,days.length)+" / "+days.length+" 天";
+      var res=await Promise.all(days.slice(i,i+10).map(getDay));
+      res.forEach(function(x){out=out.concat(x)});
+    }
+    R=out;var n=new Date();UPDATED=n.getFullYear()+"/"+(n.getMonth()+1)+"/"+n.getDate()+" "+("0"+n.getHours()).slice(-2)+":"+("0"+n.getMinutes()).slice(-2);
+    try{localStorage.setItem("nbaR",JSON.stringify({R:R,t:UPDATED}))}catch(e){}
+    m.textContent="更新完成：共 "+R.length+" 場賽程。";render();
+  }catch(err){
+    m.textContent="更新失敗："+err.message+"。若在 claude.ai 預覽中開啟，連線會被擋；請放到你自己的網站再按更新。";
+  }
+  b.disabled=false;
+}
+["f0","f1","f2","f3","f4"].forEach(function(id){sel(id).addEventListener("change",render)});
+sel("reset").addEventListener("click",function(){["f0","f1","f2","f3","f4"].forEach(function(id){sel(id).value=""});render()});
+sel("upd").addEventListener("click",update);
+render();
+update(); // 開啟網頁時自動更新
+</script>
+</body>
+</html>
