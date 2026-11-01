@@ -68,6 +68,7 @@ td[colspan]{grid-column:1/-1}
 
 <div class="bar">
   <div class="filters">
+    <label>月份<select id="fm"><option value="">全部</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option><option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option></select></label>
     <label>全場總分<select id="f4"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
     <label>第1節<select id="f0"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
     <label>第2節<select id="f1"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
@@ -128,6 +129,7 @@ function sel(id){return document.getElementById(id)}
 function render(){
   var f=[sel("f0").value,sel("f1").value,sel("f2").value,sel("f3").value,sel("f4").value];
   var rows=R.filter(function(r){
+    var mo=sel("fm").value;if(mo&&parseInt(r.d.split("/")[0],10)!==parseInt(mo,10))return false;
     for(var i=0;i<4;i++){if(f[i]){if(!r.q[i]||par(r.q[i].t)!==f[i])return false}}
     if(f[4]&&(r.ft==null||par(r.ft)!==f[4]))return false;
     return true;
@@ -177,8 +179,8 @@ async function update(){
   }
   b.disabled=false;
 }
-["f0","f1","f2","f3","f4"].forEach(function(id){sel(id).addEventListener("change",render)});
-sel("reset").addEventListener("click",function(){["f0","f1","f2","f3","f4"].forEach(function(id){sel(id).value=""});render()});
+["fm","f0","f1","f2","f3","f4"].forEach(function(id){sel(id).addEventListener("change",render)});
+sel("reset").addEventListener("click",function(){["fm","f0","f1","f2","f3","f4"].forEach(function(id){sel(id).value=""});render()});
 sel("upd").addEventListener("click",update);
 render();
 update(); // 開啟網頁時自動更新
