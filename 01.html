@@ -26,6 +26,7 @@ button{font:inherit;padding:6px 12px;border:1px solid var(--bd);border-radius:8p
 .st.main{outline:2px solid var(--bd)}
 .st.big span{font-size:30px;line-height:1.2}.st.big b{font-weight:700;color:var(--tx)}
 .o{color:var(--odd)}.e{color:var(--even)}
+.brk{flex-basis:100%;height:0}
 .wrap{overflow-x:auto;border:1px solid var(--bd);border-radius:12px;background:var(--card)}
 table{border-collapse:collapse;width:100%;min-width:860px}
 th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--bd);white-space:nowrap}
@@ -41,10 +42,12 @@ td.l,th.l{text-align:left}
 body{padding:10px}
 h1{font-size:18px}
 .bar{position:static;padding:10px}
-.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.brk{grid-column:1/-1}
+.filters label.r1{grid-column:span 2}
 .filters label{min-width:0}
 select{min-width:0;width:100%}
-button{width:100%;align-self:end}
+button{width:100%;align-self:end;grid-column:span 2}
 .stats{grid-template-columns:repeat(2,1fr)}
 .st.big span{font-size:24px}
 .wrap{border:0;background:none;overflow:visible}
@@ -68,12 +71,14 @@ td[colspan]{grid-column:1/-1}
 
 <div class="bar">
   <div class="filters">
-    <label>月份<select id="fm"><option value="">全部</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option><option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option></select></label>
-    <label>全場總分<select id="f4"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <label class="r1">月份<select id="fm"><option value="">全部</option><option value="10">10月</option><option value="11">11月</option><option value="12">12月</option><option value="1">1月</option><option value="2">2月</option><option value="3">3月</option><option value="4">4月</option></select></label>
+    <label class="r1">全場總分<select id="f4"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <div class="brk"></div>
     <label>第1節<select id="f0"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
     <label>第2節<select id="f1"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
     <label>第3節<select id="f2"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
     <label>第4節<select id="f3"><option value="">全部</option><option value="odd">單</option><option value="even">雙</option></select></label>
+    <div class="brk"></div>
     <button id="reset">重設</button>
     <button id="upd">更新數據</button>
   </div>
